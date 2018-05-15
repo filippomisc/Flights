@@ -49,12 +49,19 @@ public class FlightDAO {
 			
 			int counter = 0;
 			while (res.next()) {
-				Route route = new Route(counter, res.getString("Airline"), res.getInt("Airline_ID"), res.getString("Source_airport"),
-						res.getInt("Source_airport_ID"), res.getString("Destination_airport"),
-						res.getInt("Destination_airport_ID"), res.getString("Codeshare"), res.getInt("Stops"),
+				Airport sourceAirport = airportIdMap.get(res.getInt("Source_airport_ID"));
+				Airport destinationAirport = airportIdMap.get(res.getInt("Destination_airport_ID"));
+				Airline airline = airlineIdMap.get(res.getInt("Airline_ID"));
+						
+				Route route = new Route(counter, airline, sourceAirport, destinationAirport,
+						res.getString("Codeshare"), res.getInt("Stops"),
 						res.getString("Equipment")); 
 				list.add(routeIdMap.get(route));
 				counter++;
+				
+				sourceAirport.getRoutes().add(routeIdMap.get(route));
+				destinationAirport.getRoutes().add(routeIdMap.get(route));
+				airline.getRoutes().add(routeIdMap.get(route));
 			}	
 			conn.close();
 			return list;
@@ -87,17 +94,17 @@ public class FlightDAO {
 		}
 	}
 
-	public static void main(String args[]) {
-		FlightDAO dao = new FlightDAO();
-
-		List<Airline> airlines = dao.getAllAirlines();
-		System.out.println(airlines);
-
-		List<Airport> airports = dao.getAllAirports();
-		System.out.println(airports);
-
-		List<Route> routes = dao.getAllRoutes();
-		System.out.println(routes);
-	}
+//	public static void main(String args[]) {
+//		FlightDAO dao = new FlightDAO();
+//
+//		List<Airline> airlines = dao.getAllAirlines();
+//		System.out.println(airlines);
+//
+//		List<Airport> airports = dao.getAllAirports();
+//		System.out.println(airports);
+//
+//		List<Route> routes = dao.getAllRoutes();
+//		System.out.println(routes);
+//	}
 
 }
